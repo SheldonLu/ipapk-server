@@ -35,7 +35,7 @@ function loadApps(){
 						'</div>'+
 						'<a class="down_btn" href="'+val.url+'">下载</a>'+
 					'</div>'+
-					'<ul class="all_version" bundleID="'+val.bundleID+'" nextPage="1"></ul>'+
+					'<ul class="all_version" build="'+val.build+'" bundleID="'+val.bundleID+'" nextPage="1"></ul>'+
 				'</li>';
 				wrapper.append(item);
 			});
@@ -60,16 +60,19 @@ function loadMoreVersion(el) {
 		thisVersionInfo = $(el).parent('.all_version');
 		$(el).remove();
 	}
-	var bundleID = thisVersionInfo.attr('bundleID');
+
+
+
+	var build = thisVersionInfo.attr('build');
 	var page = thisVersionInfo.attr('nextPage');
 	$.ajax({
-		url:"/apps/"+currentPlatform+"/"+bundleID+"/"+page,	
+		url:"/apps/"+currentPlatform+"/"+build+"/"+page,
 		success: function(version){
 			if (version.error) {
 				return;
 			}
 			$.each(version,function(index,val){
-				var versionLists = 
+				var versionLists =
 				'<li data="'+val.url+'" >'+
 					'<img src="'+val.icon+'" alt="">'+
 					'<p><span class="app_name">'+val.name+'</span><span class="version_number">'+val.version+'  '+val.build+'</span></p><p><span>更新：</span><span class="update_time">'+val.uploadTime+'</span></p><p><span class="changelog">'+(val.changelog ? val.changelog : "")+'</span></p>'+
@@ -78,7 +81,7 @@ function loadMoreVersion(el) {
 			});
 			thisVersionInfo.attr('nextPage', parseInt(page)+1);
 			if (version.length > 0) {
-				var moreButton = 
+				var moreButton =
 				'<li id="moreButton">'+
 					'<span>加载更多</span>'+
 				'</li>';
@@ -95,7 +98,7 @@ $(function(){
 		switchPlatform($(this).text().toLowerCase());
 	});
 	//点击展开二维码
-	$('.qrcode_btn').on('click',function(){ 
+	$('.qrcode_btn').on('click',function(){
 		$('.qrcode_box').toggleClass('qrcode_box_show');
 		$(this).toggleClass('open');
 	});
@@ -107,15 +110,15 @@ $(function(){
 	$('.platform_wrapper').on('click','.info_box',function() {
 		loadMoreVersion(this);
 	});
-	
+
 	//版本选择
-	$('.platform_wrapper').on('click','.all_version li',function(){ 
+	$('.platform_wrapper').on('click','.all_version li',function(){
 		if ($(this).attr("id") == 'moreButton') {
 			loadMoreVersion(this);
 			return;
 		}
 
-		if(!$(this).hasClass('select') ){ 
+		if(!$(this).hasClass('select') ){
 			$(this).siblings('li').removeClass('select');
 			$(this).addClass('select');
 			$(this).parent().siblings().children('.down_btn').attr('href',$(this).attr('data'));
@@ -126,7 +129,7 @@ $(function(){
 			app_infoNode.find('.changelog').text($(this).find('.changelog').text())
 		}
 	});
-	
+
 	// 二维码
 	$('.qrcode_pic').attr('src',"http://qr.topscan.com/api.php?m=5&text="+location.href);
 	switchPlatform('ios');
